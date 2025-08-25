@@ -20,39 +20,25 @@ public class CurrencyService {
     public Optional<CurrencyDto> getCurrencyByCode(String code) {
 
         Optional<Currency> currency = currencyDao.getByCode(code);
-        Optional<CurrencyDto> currencyDto = currency.map(
-                currency1 -> new CurrencyDto(
-                        currency1.getId(),
-                        currency1.getCode(),
-                        currency1.getFullName(),
-                        currency1.getSign()
-                ));
-
-
-//        CurrencyDto currencyDto = currencyDao.getByCode(code)
-//                .map(currency -> new CurrencyDto(
-//                        currency.getId(),
-//                        currency.getCode(),
-//                        currency.getFullName(),
-//                        currency.getSign()
-//                ));
-
-
-        return currencyDto;
+        return currency.map(this::buildCurrencyDto);
     }
 
     public List<CurrencyDto> getAllCurrencies() {
         return currencyDao.getAll().stream()
-                .map(currency -> new CurrencyDto(
-                        currency.getId(),
-                        currency.getCode(),
-                        currency.getFullName(),
-                        currency.getSign()
-                ))
+                .map(this::buildCurrencyDto)
                 .collect(Collectors.toList());
     }
 
     public static CurrencyService getInstance() {
         return INSTANCE;
+    }
+
+    private CurrencyDto buildCurrencyDto(Currency currency) {
+        return new CurrencyDto(
+                currency.getId(),
+                currency.getCode(),
+                currency.getFullName(),
+                currency.getSign()
+        );
     }
 }
