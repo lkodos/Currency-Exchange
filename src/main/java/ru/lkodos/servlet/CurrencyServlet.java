@@ -1,4 +1,4 @@
-package ru.lkodos;
+package ru.lkodos.servlet;
 
 import com.google.gson.Gson;
 import jakarta.servlet.annotation.WebServlet;
