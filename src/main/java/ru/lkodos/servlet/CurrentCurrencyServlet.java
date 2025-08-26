@@ -25,9 +25,21 @@ public class CurrentCurrencyServlet extends HttpServlet {
 
         Optional<CurrencyDto> currencyByCode = currencyService.getCurrencyByCode(currencyCode);
         if (currencyCode.isEmpty()) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+            String message = "Код валюты отсутствует в адресе";
+            String currencies = new Gson().toJson("message: " + message);
+            try (var writer = resp.getWriter()) {
+                writer.write(currencies);
+                writer.flush();
+            }
         } else if (currencyByCode.isEmpty()) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404
+            String message = "Валюта не найдена";
+            String currencies = new Gson().toJson("message: " + message);
+            try (var writer = resp.getWriter()) {
+                writer.write(currencies);
+                writer.flush();
+            }
         } else {
             resp.setStatus(HttpServletResponse.SC_OK);
             String currencies = new Gson().toJson(currencyByCode);
