@@ -3,8 +3,7 @@ package ru.lkodos.dao;
 import ru.lkodos.entity.Currency;
 import ru.lkodos.util.ConnectionManager;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +29,10 @@ public class CurrencyDao implements Dao<Integer, Currency> {
             FROM currency
             WHERE code = ?
             """;
+    private static final String SAVE = """
+            INSERT INTO currency (code, full_name, sign)
+            VALUES (?, ?, ?)
+            """;
 
     private CurrencyDao() {
     }
@@ -46,6 +49,25 @@ public class CurrencyDao implements Dao<Integer, Currency> {
                 currency = Optional.empty();
             }
             return currency;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Optional<Currency> save(Currency currency) {
+        try (var connection = ConnectionManager.getConnection();
+             var ps = connection.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, currency.getCode());
+            ps.setString(2, currency.getFullName());
+            ps.setString(3, currency.getSign());
+            ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                currency.setId(generatedKeys.getInt(1));
+                return Optional.of(currency);
+            }
+            return Optional.empty();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

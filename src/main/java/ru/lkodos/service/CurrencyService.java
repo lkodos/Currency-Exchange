@@ -17,6 +17,19 @@ public class CurrencyService {
     private CurrencyService() {
     }
 
+    public Optional<CurrencyDto> insertCurrency() {
+        Currency currency = new Currency();
+        currency.setCode("AUD");
+        currency.setFullName("Australian Dollar");
+        currency.setSign("A$");
+
+        Optional<Currency> currentCurrency = currencyDao.getByCode("AUD");
+        if (currentCurrency.isEmpty()) {
+            return currencyDao.save(currency).map(this::buildCurrencyDto);
+        }
+        return Optional.empty();
+    }
+
     public Optional<CurrencyDto> getCurrencyByCode(String code) {
 
         Optional<Currency> currency = currencyDao.getByCode(code);
