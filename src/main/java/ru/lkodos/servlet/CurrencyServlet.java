@@ -38,18 +38,19 @@ public class CurrencyServlet extends HttpServlet {
 
         Optional<CurrencyDto> currencyDto = currencyService.insertCurrency();
         if (currencyDto.isPresent()) {
+            resp.setStatus(HttpServletResponse.SC_CREATED);
             String currencies = new Gson().toJson(currencyDto);
             try (var writer = resp.getWriter()) {
                 writer.write(currencies);
                 writer.flush();
             }
-        } else {
-            String currencies = new Gson().toJson("message: Валюта уже добавлена");
+        } else if (currencyDto.isEmpty()) {
+            resp.setStatus(HttpServletResponse.SC_CONFLICT);  // 409
+            String currencies = new Gson().toJson("message: Валюта с таким кодом уже существует");
             try (var writer = resp.getWriter()) {
                 writer.write(currencies);
                 writer.flush();
             }
         }
-
     }
 }
