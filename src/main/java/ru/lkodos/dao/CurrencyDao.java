@@ -17,7 +17,28 @@ public class CurrencyDao implements Dao<Integer, Currency> {
             FROM currency
             """;
 
+    private static final String GET_BY_CODE_SQL = """
+            SELECT id, name, code, sign
+            FROM currency
+            WHERE code = ?
+            """;
+
     private CurrencyDao() {
+    }
+
+    public void getByCode(String code) {
+        try (var connection = ConnectionManager.getConnection();
+             var ps = connection.prepareStatement(GET_BY_CODE_SQL)) {
+
+            List<Currency> currencies = new ArrayList<>();
+            var rs = ps.executeQuery();
+            while (rs.next()) {
+                currencies.add(builCurrency(rs));
+            }
+            return currencies;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
