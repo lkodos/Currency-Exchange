@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CurrencyDao implements Dao<Integer, Currency> {
 
@@ -26,16 +27,19 @@ public class CurrencyDao implements Dao<Integer, Currency> {
     private CurrencyDao() {
     }
 
-    public void getByCode(String code) {
+    public Optional<Currency> getByCode(String code) {
         try (var connection = ConnectionManager.getConnection();
              var ps = connection.prepareStatement(GET_BY_CODE_SQL)) {
 
-            List<Currency> currencies = new ArrayList<>();
+            ps.setObject(1, code);
             var rs = ps.executeQuery();
-            while (rs.next()) {
-                currencies.add(builCurrency(rs));
+            Optional<Currency> specificCurrency;
+            if (rs.next()) {
+                specificCurrency = Optional.of(builCurrency(rs));
+            } else {
+                specificCurrency = Optional.empty();
             }
-            return currencies;
+            return specificCurrency;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
