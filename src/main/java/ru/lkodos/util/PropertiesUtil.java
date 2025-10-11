@@ -1,5 +1,8 @@
 package ru.lkodos.util;
 
+import ru.lkodos.exception.DbAccessException;
+import ru.lkodos.exception.PropExeption;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -9,7 +12,11 @@ public class PropertiesUtil {
     private static final Properties PROPERTIES = new Properties();
 
     static {
-        loadProperties();
+        try {
+            loadProperties();
+        } catch (Exception e) {
+//            MUST BE LOGGING
+        }
     }
 
     private PropertiesUtil() {
@@ -20,10 +27,10 @@ public class PropertiesUtil {
     }
 
     private static void loadProperties() {
-        try (InputStream inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("app.properties")) {
+        try (InputStream inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("app1.properties")) {
             PROPERTIES.load(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new PropExeption("Error loading properties", e);
         }
     }
 }
