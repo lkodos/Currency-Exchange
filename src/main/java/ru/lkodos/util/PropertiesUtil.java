@@ -9,11 +9,7 @@ public class PropertiesUtil {
     private static final Properties PROPERTIES = new Properties();
 
     static {
-        try {
-            loadProperties();
-        } catch (Exception e) {
-//            MUST BE LOGGING
-        }
+        loadProperties();
     }
 
     private PropertiesUtil() {
