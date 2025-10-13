@@ -9,7 +9,7 @@ public class TestConnection {
     public static void main(String[] args) {
 
         try {
-            Connection connection = ConnectionManager.getConnection();
+            Connection connection = ConnectionManager.getDataSource().getConnection();
             System.out.println("Connection SUCCEEDED");
         } catch (Exception e) {
             System.out.println("Connection FAILED");
