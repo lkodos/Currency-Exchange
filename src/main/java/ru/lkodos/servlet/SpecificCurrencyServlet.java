@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.lkodos.dao.CurrencyDao;
+import ru.lkodos.entity.Currency;
 
 import java.io.IOException;
 
@@ -16,6 +17,9 @@ public class SpecificCurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String parameter = req.getParameter("code");
+
+        Currency specificCurrency = currencyDao.getByCode(parameter);
 
         System.out.println(req.getPathInfo());
     }
