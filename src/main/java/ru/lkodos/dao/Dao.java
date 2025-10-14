@@ -5,4 +5,6 @@ import java.util.List;
 public interface Dao<K, T> {
 
     List<T> getAll();
+
+    T getByCode(K code);
 }
