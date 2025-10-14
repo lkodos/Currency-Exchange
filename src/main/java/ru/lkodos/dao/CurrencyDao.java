@@ -20,7 +20,8 @@ public class CurrencyDao implements Dao<Integer, Currency> {
 
     @Override
     public List<Currency> getAll() {
-        try (var connection = ConnectionManager.getConnection();
+
+        try (var connection = ConnectionManager.getDataSource().getConnection();
              var ps = connection.prepareStatement(GET_ALL_SQL)) {
 
             List<Currency> currencies = new ArrayList<>();
