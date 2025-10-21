@@ -10,6 +10,7 @@ public class TestConnection {
 
         try {
             Connection connection = ConnectionManager.getDataSource().getConnection();
+            connection.getCatalog();
             System.out.println("Connection SUCCEEDED");
         } catch (Exception e) {
             System.out.println("Connection FAILED");
