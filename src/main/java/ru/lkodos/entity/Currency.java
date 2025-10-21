@@ -1,7 +1,10 @@
 package ru.lkodos.entity;
 
+import lombok.Builder;
+
 import java.util.Objects;
 
+@Builder
 public class Currency {
 
     private Integer id;

@@ -23,4 +23,20 @@ public class CurrencyServlet extends HttpServlet {
         List<Currency> currencies = currencyDao.getAll();
         Sender.send(resp, currencies);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+        String code = req.getParameter("code");
+        String name = req.getParameter("name");
+        String sign = req.getParameter("sign");
+        Currency currency = Currency.builder()
+                .code(code)
+                .name(name)
+                .sign(sign)
+                .build();
+        Sender.send(resp, currencyDao.save(currency));
+    }
 }

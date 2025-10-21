@@ -7,4 +7,6 @@ public interface Dao<K, T> {
     List<T> getAll();
 
     T getByCode(K code);
+
+    T save(T entity);
 }

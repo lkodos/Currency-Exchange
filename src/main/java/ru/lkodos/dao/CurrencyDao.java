@@ -8,14 +8,34 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.sql.Statement.*;
+
 public class CurrencyDao implements Dao<String, Currency> {
 
     private static final CurrencyDao INSTANCE = new CurrencyDao();
 
     private static final String GET_ALL_SQL = "SELECT id, code, name, sign FROM currency";
     private static final String GET_BY_CODE_SQL = "SELECT id, code, name, sign FROM currency WHERE code = ?";
+    private static final String SAVE_SQL = "INSERT INTO currency (code, name, sign) VALUES (?, ?, ?)";
 
     private CurrencyDao() {
+    }
+
+    @Override
+    public Currency save(Currency entity) {
+        try (var connection = ConnectionManager.getDataSource().getConnection();
+             var preparedStatement = connection.prepareStatement(SAVE_SQL, RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setString(1, entity.getCode());
+            preparedStatement.setString(2, entity.getName());
+            preparedStatement.setString(3, entity.getSign());
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            entity.setId(generatedKeys.getInt(1));
+            return entity;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
