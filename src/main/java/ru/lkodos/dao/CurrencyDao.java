@@ -1,6 +1,7 @@
 package ru.lkodos.dao;
 
 import ru.lkodos.entity.Currency;
+import ru.lkodos.entity.FullExchangeRate;
 import ru.lkodos.util.ConnectionManager;
 
 import java.sql.ResultSet;
@@ -17,6 +18,21 @@ public class CurrencyDao implements Dao<String, Currency> {
     private static final String GET_ALL_SQL = "SELECT id, code, name, sign FROM currency";
     private static final String GET_BY_CODE_SQL = "SELECT id, code, name, sign FROM currency WHERE code = ?";
     private static final String SAVE_SQL = "INSERT INTO currency (code, name, sign) VALUES (?, ?, ?)";
+    private static final String GET_ALL_EXCHANGE_RATES_SQL = """
+                        SELECT e.id AS id,
+                        e.base_currency_id AS base_id,
+                        c.code AS base_code,
+                        c.name AS base_name,
+                        c.sign AS base_sign,
+                        e.target_currency_id AS target_id,
+                        c2.code AS target_code,
+                        c2.name AS target_name,
+                        c2.sign AS target_sign,
+                        e.rate AS rate
+                        FROM exchange_rates e
+                        JOIN currency c ON c.id = e.base_currency_id
+                        JOIN currency c2 ON c2.id = e.target_currency_id;
+                        """;
 
     private CurrencyDao() {
     }
@@ -68,11 +84,26 @@ public class CurrencyDao implements Dao<String, Currency> {
         }
     }
 
+    public List<FullExchangeRate> getFullExchangeRates() {
+        try (var connection = ConnectionManager.getDataSource().getConnection();
+             var preparedStatement = connection.prepareStatement(GET_ALL_EXCHANGE_RATES_SQL)) {
+
+            List<FullExchangeRate> fullExchangeRates = new ArrayList<>();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                fullExchangeRates.add(buildFullExchangeRate(resultSet));
+            }
+            return fullExchangeRates;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static CurrencyDao getInstance() {
         return INSTANCE;
     }
 
-    private ru.lkodos.entity.Currency buildCurrency(ResultSet resultSet) {
+    private Currency buildCurrency(ResultSet resultSet) {
         try {
             return new ru.lkodos.entity.Currency(
                     resultSet.getInt("id"),
@@ -80,6 +111,38 @@ public class CurrencyDao implements Dao<String, Currency> {
                     resultSet.getString("name"),
                     resultSet.getString("sign")
             );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+//    private FullExchangeRate buildFullExchangeRate(ResultSet resultSet) {
+//        try {
+//            return new ru.lkodos.entity.Currency(
+//                    resultSet.getInt("id"),
+//                    resultSet.getString("code"),
+//                    resultSet.getString("name"),
+//                    resultSet.getString("sign")
+//            );
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+    private FullExchangeRate buildFullExchangeRate(ResultSet resultSet) {
+        try {
+            return FullExchangeRate.builder()
+                    .id(resultSet.getInt("id"))
+                    .baseId(resultSet.getInt("base_id"))
+                    .baseCode(resultSet.getString("base_code"))
+                    .baseName(resultSet.getString("base_name"))
+                    .baseSign(resultSet.getString("base_sign"))
+                    .targetId(resultSet.getInt("target_id"))
+                    .targetCode(resultSet.getString("target_code"))
+                    .targetName(resultSet.getString("target_name"))
+                    .targetSign(resultSet.getString("target_sign"))
+                    .rate(resultSet.getDouble("rate"))
+                    .build();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

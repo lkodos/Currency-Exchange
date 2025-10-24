@@ -30,7 +30,7 @@ VALUES (1, 2, 2),
        (1, 3, 0.5),
        (2, 3, 1.4);
 
-SELECT e.id,
+SELECT e.id AS id,
        e.base_currency_id AS base_id,
        c.code AS base_code,
        c.name AS base_name,
@@ -41,5 +41,5 @@ SELECT e.id,
        c2.sign AS target_sign,
        e.rate AS rate
 FROM exchange_rates e
-JOIN currency c ON c.id = e.base_currency_id
-JOIN currency c2 ON c2.id = e.target_currency_id;
+         JOIN currency c ON c.id = e.base_currency_id
+         JOIN currency c2 ON c2.id = e.target_currency_id;
