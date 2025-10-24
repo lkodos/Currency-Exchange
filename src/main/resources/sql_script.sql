@@ -29,3 +29,17 @@ INSERT INTO exchange_rates(base_currency_id, target_currency_id, rate)
 VALUES (1, 2, 2),
        (1, 3, 0.5),
        (2, 3, 1.4);
+
+SELECT e.id,
+       e.base_currency_id,
+       c.code,
+       c.name,
+       c.sign,
+       e.target_currency_id,
+       c2.code,
+       c2.name,
+       c2.sign,
+       e.rate
+FROM exchange_rates e
+JOIN currency c ON c.id = e.base_currency_id
+JOIN currency c2 ON c2.id = e.target_currency_id;
