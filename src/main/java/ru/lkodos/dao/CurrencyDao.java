@@ -116,19 +116,6 @@ public class CurrencyDao implements Dao<String, Currency> {
         }
     }
 
-//    private FullExchangeRate buildFullExchangeRate(ResultSet resultSet) {
-//        try {
-//            return new ru.lkodos.entity.Currency(
-//                    resultSet.getInt("id"),
-//                    resultSet.getString("code"),
-//                    resultSet.getString("name"),
-//                    resultSet.getString("sign")
-//            );
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     private FullExchangeRate buildFullExchangeRate(ResultSet resultSet) {
         try {
             return FullExchangeRate.builder()

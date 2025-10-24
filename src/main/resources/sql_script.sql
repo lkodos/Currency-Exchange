@@ -41,5 +41,5 @@ SELECT e.id AS id,
        c2.sign AS target_sign,
        e.rate AS rate
 FROM exchange_rates e
-         JOIN currency c ON c.id = e.base_currency_id
-         JOIN currency c2 ON c2.id = e.target_currency_id;
+JOIN currency c ON c.id = e.base_currency_id
+JOIN currency c2 ON c2.id = e.target_currency_id;

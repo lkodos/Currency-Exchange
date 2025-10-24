@@ -1,4 +1,4 @@
-package ru.lkodos.dao.service;
+package ru.lkodos.service;
 
 import ru.lkodos.dao.CurrencyDao;
 import ru.lkodos.dto.ExchangeRateDto;
