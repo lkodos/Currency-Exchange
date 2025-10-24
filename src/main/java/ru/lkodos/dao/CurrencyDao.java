@@ -33,6 +33,22 @@ public class CurrencyDao implements Dao<String, Currency> {
                         JOIN currency c ON c.id = e.base_currency_id
                         JOIN currency c2 ON c2.id = e.target_currency_id;
                         """;
+    private static final String GET_EXCHANGE_RATE_SQL = """
+                        SELECT e.id AS id,
+                        e.base_currency_id AS base_id,
+                        c.code AS base_code,
+                        c.name AS base_name,
+                        c.sign AS base_sign,
+                        e.target_currency_id AS target_id,
+                        c2.code AS target_code,
+                        c2.name AS target_name,
+                        c2.sign AS target_sign,
+                        e.rate AS rate
+                        FROM exchange_rates e
+                        JOIN currency c ON c.id = e.base_currency_id
+                        JOIN currency c2 ON c2.id = e.target_currency_id
+                        WHERE base_id = ? AND target_id = ?
+                        """;
 
     private CurrencyDao() {
     }
