@@ -10,4 +10,5 @@ SELECT e.id AS id,
        e.rate AS rate
 FROM exchange_rates e
 JOIN currency c ON c.id = e.base_currency_id
-JOIN currency c2 ON c2.id = e.target_currency_id;
+JOIN currency c2 ON c2.id = e.target_currency_id
+WHERE base_code = 'RUB' AND target_code = 'USD';

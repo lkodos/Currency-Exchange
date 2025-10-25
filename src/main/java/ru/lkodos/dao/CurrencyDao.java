@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.sql.Statement.*;
 
@@ -47,7 +48,7 @@ public class CurrencyDao implements Dao<String, Currency> {
                         FROM exchange_rates e
                         JOIN currency c ON c.id = e.base_currency_id
                         JOIN currency c2 ON c2.id = e.target_currency_id
-                        WHERE base_id = ? AND target_id = ?
+                        WHERE base_code = ? AND target_code = ?
                         """;
 
     private CurrencyDao() {
@@ -95,6 +96,23 @@ public class CurrencyDao implements Dao<String, Currency> {
                 currencies.add(buildCurrency(resultSet));
             }
             return currencies;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<FullExchangeRate> getExchangeRate(String baseCurrency, String targetCurrency) {
+        try (var connection = ConnectionManager.getDataSource().getConnection();
+             var preparedStatement = connection.prepareStatement(GET_EXCHANGE_RATE_SQL)) {
+
+            preparedStatement.setString(1, baseCurrency);
+            preparedStatement.setString(2, targetCurrency);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return Optional.ofNullable(buildFullExchangeRate(resultSet));
+//            if (resultSet.next()) {
+//                 return Optional.ofNullable(buildFullExchangeRate(resultSet));
+//            }
+//            return Optional.empty();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
