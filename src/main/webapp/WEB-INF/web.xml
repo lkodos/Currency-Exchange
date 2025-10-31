@@ -5,4 +5,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
   <display-name>Archetype Created Web Application</display-name>
+
+<!--  <error-page>-->
+<!--    <exception-type>ru.lkodos.exception.DbAccessException</exception-type>-->
+<!--&lt;!&ndash;    <error-code>500</error-code>&ndash;&gt;-->
+<!--    <location>/WEB-INF/jsp/500.jsp</location>-->
+<!--  </error-page>-->
+
 </web-app>

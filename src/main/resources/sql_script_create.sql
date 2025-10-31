@@ -1,26 +1,26 @@
 PRAGMA foreign_keys = on;
 
-DROP TABLE IF EXISTS currency;
 DROP TABLE IF EXISTS exchange_rates;
+DROP TABLE IF EXISTS currency;
 
 CREATE TABLE IF NOT EXISTS currency
 (
     id   INTEGER PRIMARY KEY AUTOINCREMENT,
     code TEXT UNIQUE NOT NULL,
     name TEXT        NOT NULL,
-    sign TEXT
+    symbol TEXT
 );
 
 CREATE TABLE IF NOT EXISTS exchange_rates
 (
     id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    base_currency_id INTEGER NOT NULL REFERENCES currency (id),
-    target_currency_id INTEGER NOT NULL REFERENCES currency (id),
+    base_currency_id INTEGER NOT NULL REFERENCES currency (id) ON DELETE CASCADE,
+    target_currency_id INTEGER NOT NULL REFERENCES currency (id) ON DELETE CASCADE,
     rate NUMERIC,
     UNIQUE (base_currency_id, target_currency_id)
 );
 
-INSERT INTO currency(code, name, sign)
+INSERT INTO currency(code, name, symbol)
 VALUES ('RUB', 'Russian Ruble', '₽'),
        ('EUR', 'Euro', '€'),
        ('USD', 'US Dollar', '$');
