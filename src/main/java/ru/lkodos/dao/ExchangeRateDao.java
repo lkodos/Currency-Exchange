@@ -8,6 +8,11 @@ import java.util.Optional;
 
 public class ExchangeRateDao implements Dao<String, ExchangeRate, BigDecimal> {
 
+    private static final ExchangeRateDao INSTANCE = new ExchangeRateDao();
+
+    private ExchangeRateDao() {
+    }
+
     @Override
     public List<ExchangeRate> getAll() {
         return List.of();
@@ -26,5 +31,9 @@ public class ExchangeRateDao implements Dao<String, ExchangeRate, BigDecimal> {
     @Override
     public ExchangeRate update(BigDecimal rate) {
         return null;
+    }
+
+    public static ExchangeRateDao getInstance() {
+        return INSTANCE;
     }
 }
