@@ -7,8 +7,14 @@ import java.io.IOException;
 
 public class ResponseSender {
 
+    private static final Gson gson = new Gson();
+
+    private ResponseSender() {
+    }
+
     public static void send(HttpServletResponse resp, Object obj) throws IOException {
-        String response = new Gson().toJson(obj);
+        String response = gson.toJson(obj);
         resp.getWriter().write(response);
+        resp.getWriter().flush();
     }
 }

@@ -2,6 +2,7 @@ package ru.lkodos.dao;
 
 import ru.lkodos.db_util.ConnectionManager;
 import ru.lkodos.entity.Currency;
+import ru.lkodos.exception.CurrencyAlreadyExistsException;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ public class CurrencyDao implements Dao<String, Currency, BigDecimal> {
     private static final   CurrencyDao INSTANCE = new CurrencyDao();
 
     private static final String GET_ALL = "SELECT id, code, full_name, sign FROM currency";
+    private static final String SAVE = "INSERT INTO currency (code, full_name, sign) VALUES (?, ?, ?)";
 
     private CurrencyDao() {
     }
@@ -42,7 +44,19 @@ public class CurrencyDao implements Dao<String, Currency, BigDecimal> {
 
     @Override
     public Currency save(Currency currency) {
-        return null;
+        try (var connection = ConnectionManager.getConnection();
+             var ps = connection.prepareStatement(SAVE)) {
+
+            ps.setString(1, currency.getCode());
+            ps.setString(2, currency.getFullName());
+            ps.setString(3, currency.getSign());
+            ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            currency.setId(generatedKeys.getInt(1));
+            return currency;
+        } catch (SQLException e) {
+            throw new CurrencyAlreadyExistsException("Currency already exists!", e);
+        }
     }
 
     @Override
