@@ -5,18 +5,18 @@ DROP TABLE IF EXISTS currency;
 
 CREATE TABLE IF NOT EXISTS currency
 (
-    id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    code TEXT UNIQUE NOT NULL,
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    code      TEXT UNIQUE NOT NULL,
     full_name TEXT        NOT NULL,
-    sign TEXT
+    sign      TEXT
 );
 
 CREATE TABLE IF NOT EXISTS exchange_rates
 (
-    id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    base_currency_id INTEGER NOT NULL REFERENCES currency (id) ON DELETE CASCADE,
+    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+    base_currency_id   INTEGER NOT NULL REFERENCES currency (id) ON DELETE CASCADE,
     target_currency_id INTEGER NOT NULL REFERENCES currency (id) ON DELETE CASCADE,
-    rate NUMERIC,
+    rate               NUMERIC,
     UNIQUE (base_currency_id, target_currency_id)
 );
 

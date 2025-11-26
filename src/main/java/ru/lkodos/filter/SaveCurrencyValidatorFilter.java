@@ -14,23 +14,15 @@ public class SaveCurrencyValidatorFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         if ("POST".equalsIgnoreCase((request).getMethod())) {
-            String name;
-            String code;
-            String sign;
-            try {
-                name = request.getParameter("name");
-                code = request.getParameter("code");
-                sign = request.getParameter("sign");
-            } catch (Exception e) {
+            String name = request.getParameter("name");
+            String code = request.getParameter("code");
+            String sign = request.getParameter("sign");
+
+            if (name.isEmpty() || code.isEmpty()) {
                 throw new IllegalArgumentException("Required form field is missing");
             }
-
-            if (name == null || code == null || sign == null || name.isEmpty() || code.isEmpty() || sign.isEmpty()) {
-                throw new IllegalArgumentException("Required form field is missing");
-            }
-
             if (!(RequestValidator.validate(code))) {
-                throw new IllegalArgumentException("Invalid currency code. Сurrency code must consist of three Latin letters!");
+                throw new IllegalArgumentException("Invalid currency code. Currency code must consist of three Latin letters!");
             }
             request.setAttribute("name", name);
             request.setAttribute("code", code);

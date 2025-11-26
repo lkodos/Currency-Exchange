@@ -17,6 +17,7 @@ public class CurrencyDao implements Dao<String, Currency, BigDecimal> {
 
     private static final String GET_ALL = "SELECT id, code, full_name, sign FROM currency";
     private static final String SAVE = "INSERT INTO currency (code, full_name, sign) VALUES (?, ?, ?)";
+    private static final String GET_BY_CODE = "SELECT id, code, full_name, sign FROM currency WHERE code = ?";
 
     private CurrencyDao() {
     }
@@ -38,8 +39,19 @@ public class CurrencyDao implements Dao<String, Currency, BigDecimal> {
     }
 
     @Override
-    public Optional<Currency> get(String key) {
-        return Optional.empty();
+    public Optional<Currency> get(String code) {
+        try (var connection = ConnectionManager.getConnection();
+             var ps = connection.prepareStatement(GET_BY_CODE)) {
+
+            ps.setString(1, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return Optional.of(buildCurrency(rs));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
