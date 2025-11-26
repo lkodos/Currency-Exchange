@@ -1,5 +1,6 @@
 package ru.lkodos.servlet;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,5 +33,10 @@ public class TargetExchangeRateServlet extends HttpServlet {
         } else {
             throw new CurrencyNotFoundException("Exchange rate not found for the pair");
         }
+    }
+
+    @Override
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPatch(req, resp);
     }
 }
