@@ -16,11 +16,11 @@ public class FullExchangeRate {
 
     private Integer id;
     private Integer baseCurrencyId;
-    private Integer baseCurrencyCode;
+    private String baseCurrencyCode;
     private String baseCurrencyName;
     private String baseCurrencySign;
     private Integer targetCurrencyId;
-    private Integer targetCurrencyCode;
+    private String targetCurrencyCode;
     private String targetCurrencyName;
     private String targetCurrencySign;
     private BigDecimal rate;

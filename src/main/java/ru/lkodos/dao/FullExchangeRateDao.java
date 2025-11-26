@@ -1,0 +1,89 @@
+package ru.lkodos.dao;
+
+import ru.lkodos.db_util.ConnectionManager;
+import ru.lkodos.entity.FullExchangeRate;
+
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class FullExchangeRateDao implements Dao<Integer, FullExchangeRate, BigDecimal> {
+
+    private static final FullExchangeRateDao INSTANCE = new FullExchangeRateDao();
+
+    private static final String GET_ALL_EXCHANGE_RATES = """
+                        SELECT e.id AS id,
+                               e.base_currency_id AS base_id,
+                               c.code AS base_code,
+                               c.full_name AS base_name,
+                               c.sign AS base_sign,
+                               e.target_currency_id AS target_id,
+                               c2.code AS target_code,
+                               c2.full_name AS target_name,
+                               c2.sign AS target_sign,
+                               e.rate AS rate
+                        FROM exchange_rates e
+                        JOIN currency c ON c.id = e.base_currency_id
+                        JOIN currency c2 ON c2.id = e.target_currency_id
+                        """;
+
+    private FullExchangeRateDao() {
+    }
+
+    @Override
+    public List<FullExchangeRate> getAll() {
+        try (var connection = ConnectionManager.getConnection();
+             var ps = connection.prepareStatement(GET_ALL_EXCHANGE_RATES)) {
+
+            List<FullExchangeRate> fullExchangeRates = new ArrayList<>();
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                fullExchangeRates.add(buildFullExchangeRate(rs));
+            }
+            return fullExchangeRates;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Optional<FullExchangeRate> get(Integer key) {
+        return Optional.empty();
+    }
+
+    @Override
+    public FullExchangeRate save(FullExchangeRate fullExchangeRate) {
+        return null;
+    }
+
+    @Override
+    public FullExchangeRate update(BigDecimal rate) {
+        return null;
+    }
+
+    private FullExchangeRate buildFullExchangeRate(ResultSet resultSet) {
+        try {
+            return FullExchangeRate.builder()
+                    .id(resultSet.getInt("id"))
+                    .baseCurrencyId(resultSet.getInt("base_id"))
+                    .baseCurrencyCode(resultSet.getString("base_code"))
+                    .baseCurrencyName(resultSet.getString("base_name"))
+                    .baseCurrencySign(resultSet.getString("base_sign"))
+                    .targetCurrencyId(resultSet.getInt("target_id"))
+                    .targetCurrencyCode(resultSet.getString("target_code"))
+                    .targetCurrencyName(resultSet.getString("target_name"))
+                    .targetCurrencySign(resultSet.getString("target_sign"))
+                    .rate(resultSet.getBigDecimal("rate"))
+                    .build();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static FullExchangeRateDao getInstance() {
+        return INSTANCE;
+    }
+}
