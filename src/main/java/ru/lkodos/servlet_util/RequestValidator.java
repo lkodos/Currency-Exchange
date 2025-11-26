@@ -18,4 +18,18 @@ public class RequestValidator {
         }
         return true;
     }
+
+    public static boolean validatePair(String code) {
+
+        if (code.length() != 6) {
+            return false;
+        }
+        char[] charArray = code.toUpperCase().toCharArray();
+        for (char ch : charArray) {
+            if (!(ch >= 'A' && ch <= 'Z')) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

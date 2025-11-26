@@ -8,7 +8,7 @@ import ru.lkodos.servlet_util.RequestValidator;
 import java.io.IOException;
 
 @WebFilter(servletNames = {"GetTargetCurrencyServlet"})
-public class GetTargetCurrencyValidatorFilter implements Filter {
+public class TargetCurrencyValidatorFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

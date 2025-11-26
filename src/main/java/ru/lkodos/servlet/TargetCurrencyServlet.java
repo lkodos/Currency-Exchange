@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @WebServlet(urlPatterns = {"/currency/*"}, name = "GetTargetCurrencyServlet")
-public class GetTargetCurrencyServlet extends HttpServlet {
+public class TargetCurrencyServlet extends HttpServlet {
 
     private static final CurrencyDao currencyDao = CurrencyDao.getInstance();
 
