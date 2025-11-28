@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: Нужен ли третий дженерик
-public interface Dao<K, T, E> {
+public interface Dao<K, T> {
 
     List<T> getAll();
 
@@ -12,5 +12,5 @@ public interface Dao<K, T, E> {
 
     T save(T t);
 
-    T update (E rate);
+    void update (T t);
 }

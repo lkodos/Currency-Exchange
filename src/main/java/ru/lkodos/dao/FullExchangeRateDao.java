@@ -3,14 +3,13 @@ package ru.lkodos.dao;
 import ru.lkodos.db_util.ConnectionManager;
 import ru.lkodos.entity.FullExchangeRate;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FullExchangeRateDao implements Dao<String, FullExchangeRate, BigDecimal> {
+public class FullExchangeRateDao implements Dao<String, FullExchangeRate> {
 
     private static final FullExchangeRateDao INSTANCE = new FullExchangeRateDao();
 
@@ -93,8 +92,7 @@ public class FullExchangeRateDao implements Dao<String, FullExchangeRate, BigDec
     }
 
     @Override
-    public FullExchangeRate update(BigDecimal rate) {
-        return null;
+    public void update(FullExchangeRate fullExchangeRate) {
     }
 
     private FullExchangeRate buildFullExchangeRate(ResultSet resultSet) {
