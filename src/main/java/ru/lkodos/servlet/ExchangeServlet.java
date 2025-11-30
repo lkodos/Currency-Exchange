@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.lkodos.dto.ExchangeDto;
 
 import java.io.IOException;
 
@@ -24,9 +25,10 @@ public class ExchangeServlet extends HttpServlet {
             throw new IllegalArgumentException("Illegal amount parameter");
         }
 
-
-
-
-
+        ExchangeDto exchangeDto = ExchangeDto.builder()
+                .from(from)
+                .to(to)
+                .amount(amount)
+                .build();
     }
 }

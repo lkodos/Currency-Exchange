@@ -14,7 +14,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class CurrencyDao implements Dao<String, Currency> {
 
-    private static final   CurrencyDao INSTANCE = new CurrencyDao();
+    private static final CurrencyDao INSTANCE = new CurrencyDao();
 
     private static final String GET_ALL = "SELECT id, code, full_name, sign FROM currency";
     private static final String SAVE = "INSERT INTO currency (code, full_name, sign) VALUES (?, ?, ?)";
