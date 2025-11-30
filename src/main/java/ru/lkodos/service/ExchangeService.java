@@ -3,8 +3,10 @@ package ru.lkodos.service;
 import ru.lkodos.dao.ExchangeRateDao;
 import ru.lkodos.dao.FullExchangeRateDao;
 import ru.lkodos.dto.ExchangeDto;
+import ru.lkodos.dto.ExchangeResultDto;
 import ru.lkodos.entity.FullExchangeRate;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class ExchangeService {
@@ -15,6 +17,10 @@ public class ExchangeService {
     private static final FullExchangeRateDao fullExchangeRateDao = FullExchangeRateDao.getInstance();
 
     private ExchangeService() {
+    }
+
+    public BigDecimal calculate(Double amount, BigDecimal rate) {
+        return BigDecimal.valueOf(amount).multiply(rate);
     }
 
     public Optional<FullExchangeRate> getByCode(ExchangeDto exchangeDto) {

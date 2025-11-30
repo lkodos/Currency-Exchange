@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExchangeDto {
+public class ExchangeResultDto {
 
-    private String from;
-    private String to;
+    private CurrencyDto baseCurrency;
+    private CurrencyDto targetCurrency;
+    private BigDecimal rate;
     private Double amount;
+    private Double convertedAmount;
 }

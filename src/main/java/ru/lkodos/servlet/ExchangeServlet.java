@@ -16,10 +16,10 @@ public class ExchangeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String from = (String) req.getAttribute("from");
         String to = (String) req.getAttribute("to");
-        int amount;
+        Double amount;
 
         try {
-            amount = Integer.parseInt(req.getParameter("amount"));
+            amount = Double.parseDouble(req.getParameter("amount"));
         }
         catch (NumberFormatException e) {
             throw new IllegalArgumentException("Illegal amount parameter");
