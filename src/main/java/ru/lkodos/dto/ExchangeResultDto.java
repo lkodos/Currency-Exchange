@@ -17,5 +17,5 @@ public class ExchangeResultDto {
     private CurrencyDto targetCurrency;
     private BigDecimal rate;
     private Double amount;
-    private Double convertedAmount;
+    private BigDecimal convertedAmount;
 }
