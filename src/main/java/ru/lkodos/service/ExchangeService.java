@@ -23,22 +23,19 @@ public class ExchangeService {
 
     public ExchangeResultDto convert(ExchangeDto exchangeDto) {
 
-        Optional<FullExchangeRate> fullExchangeRate = getByCode(exchangeDto);
-        if (fullExchangeRate.isPresent()) {
-            ExchangeResultDto exchangeResultDto = MapperUtil.map(fullExchangeRate.get(), ExchangeResultDto.class);
-            BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), fullExchangeRate.get().getRate());
-            exchangeResultDto.setAmount(exchangeDto.getAmount());
-            exchangeResultDto.setConvertedAmount(convertedAmount);
-            return exchangeResultDto;
-        } else if (fullExchangeRate.isEmpty()) {
-            fullExchangeRate = getByReverseCode(exchangeDto);
-            if (fullExchangeRate.isPresent()) {
-                ExchangeResultDto exchangeResultDto = MapperUtil.map(fullExchangeRate.get(), ExchangeResultDto.class);
-                BigDecimal rate = BigDecimal.valueOf(1).divide(exchangeResultDto.getRate(),5, RoundingMode.HALF_EVEN);
+        Optional<FullExchangeRate> fullExchangeRateOptional = getByCode(exchangeDto);
+        if (fullExchangeRateOptional.isPresent()) {
+            FullExchangeRate fullExchangeRate = fullExchangeRateOptional.get();
+            BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), fullExchangeRateOptional.get().getRate());
+            return buidExchangeResultDto(exchangeDto, fullExchangeRate, convertedAmount);
+        }
+        else {
+            fullExchangeRateOptional = getByReverseCode(exchangeDto);
+            if (fullExchangeRateOptional.isPresent()) {
+                FullExchangeRate fullExchangeRate = fullExchangeRateOptional.get();
+                BigDecimal rate = BigDecimal.valueOf(1).divide(fullExchangeRate.getRate(),5, RoundingMode.HALF_EVEN);
                 BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), rate);
-                exchangeResultDto.setAmount(exchangeDto.getAmount());
-                exchangeResultDto.setConvertedAmount(convertedAmount);
-                return exchangeResultDto;
+                return buidExchangeResultDto(exchangeDto, fullExchangeRate, convertedAmount);
             } else {
 //                ExchangeResultDto exchangeResultDto = MapperUtil.map(fullExchangeRate.get(), ExchangeResultDto.class);
 //                BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), fullExchangeRate.get().getRate());
@@ -47,7 +44,13 @@ public class ExchangeService {
                 return null;
             }
         }
-        return null;
+    }
+
+    private static ExchangeResultDto buidExchangeResultDto(ExchangeDto exchangeDto, FullExchangeRate fullExchangeRate, BigDecimal convertedAmount) {
+        ExchangeResultDto exchangeResultDto = MapperUtil.map(fullExchangeRate, ExchangeResultDto.class);
+        exchangeResultDto.setAmount(exchangeDto.getAmount());
+        exchangeResultDto.setConvertedAmount(convertedAmount);
+        return exchangeResultDto;
     }
 
     public BigDecimal calculate(Double amount, BigDecimal rate) {
