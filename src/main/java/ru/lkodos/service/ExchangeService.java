@@ -1,10 +1,11 @@
 package ru.lkodos.service;
 
-import ru.lkodos.dao.ExchangeRateDao;
 import ru.lkodos.dao.FullExchangeRateDao;
+import ru.lkodos.dto.CurrencyDto;
 import ru.lkodos.dto.ExchangeDto;
 import ru.lkodos.dto.ExchangeResultDto;
 import ru.lkodos.entity.FullExchangeRate;
+import ru.lkodos.exception.CurrencyNotFoundException;
 import ru.lkodos.mapper.MapperUtil;
 
 import java.math.BigDecimal;
@@ -15,7 +16,6 @@ public class ExchangeService {
 
     private static final ExchangeService INSTANCE = new ExchangeService();
 
-    private static final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private static final FullExchangeRateDao fullExchangeRateDao = FullExchangeRateDao.getInstance();
 
     private ExchangeService() {
@@ -37,14 +37,41 @@ public class ExchangeService {
                 BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), rate);
                 return buidExchangeResultDto(exchangeDto, fullExchangeRate, convertedAmount);
             } else {
-//                ExchangeResultDto exchangeResultDto = MapperUtil.map(fullExchangeRate.get(), ExchangeResultDto.class);
-//                BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), fullExchangeRate.get().getRate());
-//                exchangeResultDto.setAmount(exchangeDto.getAmount());
-//                exchangeResultDto.setConvertedAmount(BigDecimal.valueOf(1).divide(convertedAmount));
-                return null;
+                Optional<FullExchangeRate> fullExchangeRateFrom = fullExchangeRateDao.getByCode("USD", exchangeDto.getFrom());
+                Optional<FullExchangeRate> fullExchangeRateTo = fullExchangeRateDao.getByCode("USD", exchangeDto.getTo());
+                if (fullExchangeRateFrom.isPresent() && fullExchangeRateTo.isPresent()) {
+                    BigDecimal FromRate = fullExchangeRateFrom.get().getRate();
+                    BigDecimal ToRate = fullExchangeRateTo.get().getRate();
+                    BigDecimal rate = BigDecimal.valueOf(1).divide(FromRate, 5, RoundingMode.HALF_EVEN).multiply(ToRate);
+                    BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), rate);
+                    CurrencyDto baseCurrencyDto = CurrencyDto.builder()
+                            .id(fullExchangeRateFrom.get().getBaseCurrencyId())
+                            .name(fullExchangeRateFrom.get().getBaseCurrencyName())
+                            .code(fullExchangeRateFrom.get().getBaseCurrencyCode())
+                            .sign(fullExchangeRateFrom.get().getBaseCurrencySign())
+                            .build();
+                    CurrencyDto targetCurrencyDto = CurrencyDto.builder()
+                            .id(fullExchangeRateTo.get().getTargetCurrencyId())
+                            .name(fullExchangeRateTo.get().getTargetCurrencyName())
+                            .code(fullExchangeRateTo.get().getTargetCurrencyCode())
+                            .sign(fullExchangeRateTo.get().getTargetCurrencySign())
+                            .build();
+
+                    return ExchangeResultDto.builder()
+                            .baseCurrency(baseCurrencyDto)
+                            .targetCurrency(targetCurrencyDto)
+                            .rate(rate)
+                            .amount(exchangeDto.getAmount())
+                            .convertedAmount(convertedAmount)
+                            .build();
+                }
+                else {
+                    throw new CurrencyNotFoundException("One (or both) currencies from the currency pair do not exist in the database");
+                }
             }
         }
     }
+
 
     private static ExchangeResultDto buidExchangeResultDto(ExchangeDto exchangeDto, FullExchangeRate fullExchangeRate, BigDecimal convertedAmount) {
         ExchangeResultDto exchangeResultDto = MapperUtil.map(fullExchangeRate, ExchangeResultDto.class);

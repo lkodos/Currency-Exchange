@@ -22,10 +22,13 @@ CREATE TABLE IF NOT EXISTS exchange_rates
 
 INSERT INTO currency(code, full_name, sign)
 VALUES ('RUB', 'Russian Ruble', '₽'),
+       ('USD', 'US Dollar', '$'),
        ('EUR', 'Euro', '€'),
-       ('USD', 'US Dollar', '$');
+       ('AUD', 'Australian Dollar', 'A$');
 
 INSERT INTO exchange_rates(base_currency_id, target_currency_id, rate)
-VALUES (1, 2, 2),
-       (1, 3, 0.5),
-       (2, 3, 1.4);
+VALUES (1, 2, 0.01204),
+       (1, 3, 0.01083),
+       (2, 3, 0.85034),
+       (2, 1, 72.27891),
+       (2, 4, 1.46335);
