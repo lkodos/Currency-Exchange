@@ -26,15 +26,15 @@ public class ExchangeService {
         Optional<FullExchangeRate> fullExchangeRateOptional = getByCode(exchangeDto);
         if (fullExchangeRateOptional.isPresent()) {
             FullExchangeRate fullExchangeRate = fullExchangeRateOptional.get();
-            BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), fullExchangeRateOptional.get().getRate());
+            BigDecimal convertedAmount = (calculate(exchangeDto.getAmount(), fullExchangeRateOptional.get().getRate())).setScale(2, RoundingMode.HALF_UP);
             return buidExchangeResultDto(exchangeDto, fullExchangeRate, convertedAmount);
         }
         else {
             fullExchangeRateOptional = getByReverseCode(exchangeDto);
             if (fullExchangeRateOptional.isPresent()) {
                 FullExchangeRate fullExchangeRate = fullExchangeRateOptional.get();
-                BigDecimal rate = BigDecimal.valueOf(1).divide(fullExchangeRate.getRate(),5, RoundingMode.HALF_EVEN);
-                BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), rate);
+                BigDecimal rate = BigDecimal.valueOf(1).divide(fullExchangeRate.getRate(),2, RoundingMode.HALF_UP);
+                BigDecimal convertedAmount = (calculate(exchangeDto.getAmount(), rate)).setScale(2, RoundingMode.HALF_UP);
                 return buidExchangeResultDto(exchangeDto, fullExchangeRate, convertedAmount);
             } else {
                 Optional<FullExchangeRate> fullExchangeRateFrom = fullExchangeRateDao.getByCode("USD", exchangeDto.getFrom());
@@ -42,8 +42,8 @@ public class ExchangeService {
                 if (fullExchangeRateFrom.isPresent() && fullExchangeRateTo.isPresent()) {
                     BigDecimal FromRate = fullExchangeRateFrom.get().getRate();
                     BigDecimal ToRate = fullExchangeRateTo.get().getRate();
-                    BigDecimal rate = BigDecimal.valueOf(1).divide(FromRate, 5, RoundingMode.HALF_EVEN).multiply(ToRate);
-                    BigDecimal convertedAmount = calculate(exchangeDto.getAmount(), rate);
+                    BigDecimal rate = BigDecimal.valueOf(1).divide(FromRate, 2, RoundingMode.HALF_UP).multiply(ToRate);
+                    BigDecimal convertedAmount = (calculate(exchangeDto.getAmount(), rate)).setScale(2, RoundingMode.HALF_UP);
                     CurrencyDto baseCurrencyDto = CurrencyDto.builder()
                             .id(fullExchangeRateFrom.get().getBaseCurrencyId())
                             .name(fullExchangeRateFrom.get().getBaseCurrencyName())
